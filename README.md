@@ -1,92 +1,146 @@
-# arctestsite-slurm-el9-arc7
+# ARC 7 slurm el9 test-site
+This repository holds the arc.conf and slurm configuration files for the ARC SLURM test-site. 
+
+The endpoint fqdn is: **arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no**
+
+This is a mini-cluster with 1 ARC-CE SLURM frontend, and with 1 compute node. 
+
+The purpose of this site is to have a persistent ARC SLURM site where one can do experimentation and testing. 
+
+Via GitLab (or the GitHub mirror) site you can via merge requests (pull requests) change the arc.conf, slurm.conf or slurmnodes.conf files on the cluster. 
+You can also install a new ARC plugin that can be used in the authgroup or mapping blocks in arc.conf. 
+
+The cluster is set up with a web-service for you to be able to view the arc.conf, the ARC logs, and check the ARC status. This can be useful if you want to check if the changes you attempted to the configuration or auth/mapping plugin was successful. 
+
+If you have access to GitLab you can also get information on the success or failure of your changes via labels added by the system to the original MR.  
 
 
+See details below  on how to. 
 
-## Getting started
+**Table of contents**
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+[[_TOC_]] 
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+# Interacting with the web services
 
-## Add your files
+## Read ARC conf file as currently  present on site
+View arc.conf via curl or web-broser with: [http://arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no/arcconf](http://arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no/arcconf)
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Read ARC log files
+Browse ARC log files via curl or web-browser with: [http://arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no/arclogs](http://arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no/arclogs)
+
+
+## Check ARC state
+View ARC state via curl or web-browser with: [http://arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no/arcstatus](http://arctestcluster-slurm-el9-arc7-ce1.cern-test.uiocloud.no/arcstatus)
+
+
+## How to use the Gitlab/GitHub webhooks to change configuration files and install plugins
+Change the arc.conf or slurm configuration files (slurm.conf slurmdbd.conf or slurmnodes.conf), or install a new plugin, in the following way 
+(assuming you know the git cli)
+
+- Clone the repo
+- Checkout a new branch 
+- Do the changes to the configuration files, push branch upstream
+- Create a merge request following the url link from the push
+- Add one label per configuration file you changed. Pick from the pre-defined labels.  
+  - conf:arc 
+  - conf:slurm
+  - conf:slurmdbd
+  - conf:slurmnodes
+  - arc:install_plugin
+- Once the merge request is merged, the webhook will try to replace the configuration files.
+- You will see the result as new labels in the merge request
+- You can check the status of ARC following the url requests mentioned above. 
+
+
+### Concrete example
+Depending on if you are accessing this page from GitLab (A) or the Github mirror site (B), you do:
+A) Gitlab:
 
 ```
-cd existing_repo
-git remote add origin https://source.coderefinery.org/nordugrid/arctestsite-slurm-el9-arc7.git
-git branch -M main
-git push -uf origin main
+git clone https://source.coderefinery.org/nordugrid/arctestsite-slurm-el9-arc7.git
+``` 
+
+B) GitHub mirror site:
+
+```
+git clone https://github.com/nordugrid/arctestsite-slurm-el9-arc7.git
+``` 
+
+Then for either option, use normal git procedures to commit changes and create a merge request (MR, GitLab) or pull request (PR, GitHub)
+
+Example:
+
+```
+cd arctestsite-slurm-el9-arc7
+git checkout -b mynewtestbranch
 ```
 
-## Integrate with your tools
+Do changes in e.g. arc.conf, then:
 
-- [ ] [Set up project integrations](https://source.coderefinery.org/nordugrid/arctestsite-slurm-el9-arc7/-/settings/integrations)
+```
+git add arc.conf
+git commit -m "I did some changes in arc.conf for testing the procedure"
+git push -u origin mynewtestbranch
+``` 
 
-## Collaborate with your team
+- Then follow the instructions from the push command on how to create a merge request with the url provided. 
+- Add appropriate labels (see instructions above).In this example the correct would be `conf:arc`
+- Merge the merge-request, or ask someone with access to merge for you if you are not allowed.
+- Only once the merge-request is merged, will the configuration files be updated on the test cluster. 
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-## Test and Deploy
 
-Use the built-in continuous integration in GitLab.
+## Replacing arc.conf or slurm configuration
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Whenever the arc.conf or the slurm config files in the main branch changes via a merge request, the new arc.conf/slurm config files are pulled onto arctestcluster-slurm-ce1, and replaced with the old ones. ARC/slurm is restarted with the new configuration. 
 
-***
+You need to label your merge-requests according to what files you have changed. Only the files corresponding to the labels chosen will be updated upon the merge. 
 
-# Editing this README
+Once the merge request has been accepted, you will see whether the replacement went ok or not by checking the labels on the original MR. If something went wrong, only Maiken can typically check the webhook to see what is wrong. 
+The replacement will fail for instance if the arc.conf validation failed e.g. if the arc.conf has some wrong entries or if something actually went wrong with the webhook service itself. 
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
-## Name
-Choose a self-explaining name for your project.
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+## Install an auth plugin or mapping plugin
+To install a new auth plugin on the server, two steps are needed
+1. Create the auth plugin script in ./arcplugins folder in git
+2. Update the arc.conf file to use the auth plugin 
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### 1. Install plugin
+Assuming you have cloned the repo, and created your dev-branch
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+1. Create the plugin script in the arcplugins folder
+2. Commit and push
+3. Create MR/PR
+4. Label the MR/PR with arc:install_plugin
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### 2. Configure ARC to use the plugin
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+1. Create a dev-branch
+2. Update arc.conf to use the plugin:
+  - How to configure ARC for authentication via plugin: https://www.nordugrid.org/arc/arc6/admins/reference.html#plugin
+  - How to configure ARC for mapping via plugin: https://www.nordugrid.org/arc/arc6/admins/reference.html#map-with-plugin
+3. Commit and push
+4. Create MR/PR
+5. Label the MR/PR with conf:arc
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## What do the labels added by the system mean 
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- fetch-conf:<conftype>:failure
+  - If fetching the configuration from gitlab failed, then this label is added to the merge request by the webhook.
+  - Nothing else will be tried so replacing the configuration has failed. 
+- update-conf-<conftype>:success 
+  - If configuration (e.g. slurm.conf, slurmdbd.conf, arc.conf etc) was successfully replaced
+- reconfig:success
+  -  After replacing the config the service is restarted or reconfigured, typically with ´´scontrol reconfig´´ or ´´arcctl service restart -a ´´ - if this succeeds, i.e. config is valid, then success
+- reconfig:failure: 
+  - reconfig failed, so something is wrong with the configuration you tried updating
+- reverted-config-<conftype>:success
+  - If reconfig:failure then the system tries to restore to the original configuration. And restart the service. This succeeded if label is present.
+- cluster:fix-manually 
+  - If reconfig:failure and reverting to original config failed, then this label is added. Cluster needs manually restoring/checking. 
